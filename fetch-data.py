@@ -4,12 +4,12 @@ from mp_api.client import MPRester
 import pandas as pd  
 
 def main() -> None:
-    load_dotenv()  # reads .env and puts values into os.environ
+    load_dotenv()
 
     api_key = os.environ.get("MY_API_KEY")
     with MPRester(api_key) as mpr:
         docs = mpr.materials.summary.search(
-        chemsys="*-O",              # must contain oxygen
+        chemsys="*-O", # must contain oxygen, originally thought I could do elements=["O"] but that would give me non-oxides too
         fields=[
             "formula_pretty",        # 1. chemical formula
             "band_gap",               # 2. electronic band gap
@@ -23,7 +23,7 @@ def main() -> None:
             "theoretical",            # 11. experimentally confirmed or predicted
             "nelements",              # 12. number of distinct elements
             "elements",               # 13. list of constituent elements
-            "material_id",            # 15. unique MP identifier (always worth keeping) 
+            "material_id",            # 15. unique MP identifier 
         ],
     )
         entry_rows = [doc.dict() for doc in docs]
