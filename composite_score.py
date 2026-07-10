@@ -18,6 +18,7 @@ def symmetry_rank_normalized(df: pd.DataFrame) -> pd.Series:
     normalized = (df["symmetry_rank_raw"] - 1) / (7 - 1)
     return normalized
 
+
 def compose_score(
     stability_norm: pd.Series, symmetry_norm: pd.Series, method: str = "average"
 ) -> pd.Series:
@@ -32,7 +33,13 @@ def compose_score(
 
 
 def compare_rankings(df: pd.DataFrame, top_n: int = 10):
-    cols_to_show = ["material_id", "formula_pretty", "stability_norm", "symmetry_norm", "composite_score"]
+    cols_to_show = [
+        "material_id",
+        "formula_pretty",
+        "stability_norm",
+        "symmetry_norm",
+        "composite_score",
+    ]
 
     top_composite = df.nlargest(top_n, "composite_score")[cols_to_show]
     top_stability = df.nlargest(top_n, "stability_norm")[cols_to_show]
@@ -49,9 +56,16 @@ def compare_rankings(df: pd.DataFrame, top_n: int = 10):
     ids_stability = set(top_stability["material_id"])
     ids_symmetry = set(top_symmetry["material_id"])
 
-    print(f"\nOverlap composite vs stability: {len(ids_composite & ids_stability)} / {top_n}")
-    print(f"Overlap composite vs symmetry: {len(ids_composite & ids_symmetry)} / {top_n}")
-    print(f"Overlap stability vs symmetry: {len(ids_stability & ids_symmetry)} / {top_n}")
+    print(
+        f"\nOverlap composite vs stability: {len(ids_composite & ids_stability)} / {top_n}"
+    )
+    print(
+        f"Overlap composite vs symmetry: {len(ids_composite & ids_symmetry)} / {top_n}"
+    )
+    print(
+        f"Overlap stability vs symmetry: {len(ids_stability & ids_symmetry)} / {top_n}"
+    )
+
 
 def main(path):
     df = flatten_symmetry(pd.read_csv(path))
