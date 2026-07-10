@@ -14,7 +14,6 @@ def main(path):
 
     df = flatten_symmetry(pd.read_csv(path))
 
-    # ranking shit
     def symmetry_rank(crystal_system: str) -> int:
         lookup = crystal_system.capitalize()
         symmetry_ranking = {
@@ -33,7 +32,7 @@ def main(path):
         formula_grouped_data = df.groupby("formula_pretty")
         records = []
         for formula_name, group_df in formula_grouped_data:
-            group_df = group_df.copy()  # fuck you pandas let me append a column
+            group_df = group_df.copy()
             group_df["symmetry_rank"] = group_df["crystal_system"].apply(symmetry_rank)
 
             stable_index = group_df["energy_above_hull"].idxmin()
@@ -59,7 +58,6 @@ def main(path):
 
     def plotting_function(exception_df: pd.DataFrame):
         fig, ax = plt.subplots(figsize=(10, 6))
-        # look at me using violin plots, fancy ay? yeah no im learning plots
         # distribution of stability at each rank
         sns.violinplot(
             x="symmetry_rank",
@@ -75,8 +73,7 @@ def main(path):
         most_symmetric = exception_df[exception_df["is_most_symmetric"]]
 
         ax.scatter(
-            most_stable["symmetry_rank"]
-            - 1,  # shift, remember that when you read this futurekait
+            most_stable["symmetry_rank"] - 1,  # shift because otherwise it would be at 0
             most_stable["energy_above_hull"],
             marker="v",
             color="blue",
@@ -85,9 +82,8 @@ def main(path):
             alpha=0.6,
             edgecolors="black",
             linewidths=0.3,
-            zorder=3,  # gaspers hes having to increase zorder!
+            zorder=3,
         )
-        # im getting pretty fancy with these customizations ay
         ax.scatter(
             most_symmetric["symmetry_rank"] - 1,
             most_symmetric["energy_above_hull"],

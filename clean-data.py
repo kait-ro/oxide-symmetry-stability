@@ -7,13 +7,10 @@ def load_raw_data(filepath: str) -> pd.DataFrame:
 
 
 def flatten_symmetry(df: pd.DataFrame) -> pd.DataFrame:
-    # I have a dict called symmetry in my df I need to unpack it here.
-    docs = df["symmetry"].apply(ast.literal_eval)  # this is a series
-    symmetry_df = docs.apply(pd.Series)  # converting dict entries into series
-    df = pd.concat([df, symmetry_df], axis=1)  # adding the series as columns
-    df = df.drop(
-        columns=["symmetry"]
-    )  # dropping the original whole dict thingymajig column
+    docs = df["symmetry"].apply(ast.literal_eval)
+    symmetry_df = docs.apply(pd.Series)
+    df = pd.concat([df, symmetry_df], axis=1)
+    df = df.drop(columns=["symmetry"])
     return df
 
 
@@ -35,8 +32,6 @@ def clean_oxide_data(df: pd.DataFrame) -> pd.DataFrame:
         return row.capitalize()
 
     new_df["crystal_system"] = new_df["crystal_system"].apply(capitalize)
-
-    # 15 minutes of reading and found mask() yippi
     new_df["band_gap"] = new_df["band_gap"].mask(new_df["band_gap"] < 0)
     new_df["formation_energy_per_atom"] = new_df["formation_energy_per_atom"].mask(
         new_df["formation_energy_per_atom"] > 2
