@@ -29,7 +29,6 @@ def inject_test_noise(input_path: str, output_path: str) -> None:
         valid_index, size=min(number_negative, len(valid_index)), replace=False
     )
     df.loc[negative_index, "band_gap"] = -df.loc[negative_index, "band_gap"]
-    # I must say I'm learning alot about creating noise esp seeding
     # making case changes so I can use pandas to correct them later
     case_variants = [str.upper, str.lower, str.title]
     number_recase = max(1, int(0.15 * len(df)))
