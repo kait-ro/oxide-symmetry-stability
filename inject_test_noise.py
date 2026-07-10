@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import ast
 
-RNG_SEED = 42  # woahh hitchhiker's guide to the galaxy!?!
+RNG_SEED = 42 # woahh hitchhiker's guide to the galaxy!?!
 
 
 def inject_test_noise(input_path: str, output_path: str) -> None:
@@ -25,9 +25,11 @@ def inject_test_noise(input_path: str, output_path: str) -> None:
     # make 3% of bandgap values negative (invalid so i should be able to clean it)
     number_negative = max(1, int(0.03 * len(df)))
     valid_index = df.index[df["band_gap"].notna()]
-    negative_index = rng.choice(valid_index, size=min(number_negative, len(valid_index)), replace=False)
+    negative_index = rng.choice(
+        valid_index, size=min(number_negative, len(valid_index)), replace=False
+    )
     df.loc[negative_index, "band_gap"] = -df.loc[negative_index, "band_gap"]
-    #I must say I'm learning alot about creating noise esp seeding
+    # I must say I'm learning alot about creating noise esp seeding
     # making case changes so I can use pandas to correct them later
     case_variants = [str.upper, str.lower, str.title]
     number_recase = max(1, int(0.15 * len(df)))
@@ -35,8 +37,10 @@ def inject_test_noise(input_path: str, output_path: str) -> None:
     docs = df["symmetry"].apply(ast.literal_eval)  # Series of dicts, one per row
     for index in recase_index:
         variant_function = case_variants[rng.integers(0, len(case_variants))]
-        symmetry_dict = docs.loc[index]                              # get this row's dict
-        symmetry_dict["crystal_system"] = variant_function(str(symmetry_dict["crystal_system"]))
+        symmetry_dict = docs.loc[index]  # get this row's dict
+        symmetry_dict["crystal_system"] = variant_function(
+            str(symmetry_dict["crystal_system"])
+        )
         df.loc[index, "symmetry"] = str(symmetry_dict)
 
     # duplicating a row every like 5-10 rows in the csv
@@ -54,4 +58,7 @@ def inject_test_noise(input_path: str, output_path: str) -> None:
 
 
 if __name__ == "__main__":
-    inject_test_noise("oxide-symmetry-stability/oxides_raw.csv", "oxide-symmetry-stability/oxides_raw_unclean.csv")
+    inject_test_noise(
+        "oxide-symmetry-stability/oxides_raw.csv",
+        "oxide-symmetry-stability/oxides_raw_unclean.csv",
+    )

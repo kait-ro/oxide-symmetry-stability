@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 from mp_api.client import MPRester
-import pandas as pd  
+import pandas as pd
+
 
 def main() -> None:
     load_dotenv()
@@ -9,23 +10,23 @@ def main() -> None:
     api_key = os.environ.get("MY_API_KEY")
     with MPRester(api_key) as mpr:
         docs = mpr.materials.summary.search(
-        chemsys="*-O", # must contain oxygen, originally thought I could do elements=["O"] but that would give me non-oxides too
-        fields=[
-            "formula_pretty",        # 1. chemical formula
-            "band_gap",               # 2. electronic band gap
-            "formation_energy_per_atom",  # 3. stability measure
-            "energy_above_hull",      # 4. distance from most stable form
-            "is_stable",              # 5. True/False stability flag
-            "density",                # 6. mass per volume
-            "volume",                 # 7. unit cell volume
-            "nsites",                 # 8. number of atoms in unit cell
-            "symmetry",               # 10. spacegroup symbol/number (nested object)
-            "theoretical",            # 11. experimentally confirmed or predicted
-            "nelements",              # 12. number of distinct elements
-            "elements",               # 13. list of constituent elements
-            "material_id",            # 15. unique MP identifier 
-        ],
-    )
+            chemsys="*-O",
+            fields=[
+                "formula_pretty",
+                "band_gap",
+                "formation_energy_per_atom",
+                "energy_above_hull",
+                "is_stable",
+                "density",
+                "volume",
+                "nsites",
+                "symmetry",
+                "theoretical",
+                "nelements",
+                "elements",
+                "material_id",
+            ],
+        )
         entry_rows = [doc.dict() for doc in docs]
         df = pd.DataFrame(entry_rows)
         df.to_csv("oxides_raw.csv", index=False)
@@ -33,4 +34,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

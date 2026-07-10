@@ -1,3 +1,6 @@
 mp-api
 python-dotenv
 pandas
+matplotlib
+seaborn
+numpy
