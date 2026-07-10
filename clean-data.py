@@ -1,17 +1,9 @@
 import pandas as pd
-import ast
+from data_utils import flatten_symmetry
 
 
 def load_raw_data(filepath: str) -> pd.DataFrame:
     return pd.read_csv(filepath)
-
-
-def flatten_symmetry(df: pd.DataFrame) -> pd.DataFrame:
-    docs = df["symmetry"].apply(ast.literal_eval)
-    symmetry_df = docs.apply(pd.Series)
-    df = pd.concat([df, symmetry_df], axis=1)
-    df = df.drop(columns=["symmetry"])
-    return df
 
 
 def clean_oxide_data(df: pd.DataFrame) -> pd.DataFrame:

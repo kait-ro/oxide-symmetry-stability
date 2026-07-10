@@ -1,31 +1,11 @@
 import pandas as pd
-import ast
 import matplotlib.pyplot as plt
 import seaborn as sns
+from data_utils import flatten_symmetry, symmetry_rank
 
 
 def main(path):
-    def flatten_symmetry(df: pd.DataFrame) -> pd.DataFrame:
-        docs = df["symmetry"].apply(ast.literal_eval)
-        symmetry_df = docs.apply(pd.Series)
-        df = pd.concat([df, symmetry_df], axis=1)
-        df = df.drop(columns=["symmetry"])
-        return df.drop(columns=["fields_not_requested", "unavailable_fields"])
-
     df = flatten_symmetry(pd.read_csv(path))
-
-    def symmetry_rank(crystal_system: str) -> int:
-        lookup = crystal_system.capitalize()
-        symmetry_ranking = {
-            "Triclinic": 1,
-            "Monoclinic": 2,
-            "Orthorhombic": 3,
-            "Tetragonal": 4,
-            "Trigonal": 5,
-            "Hexagonal": 6,
-            "Cubic": 7,
-        }
-        return symmetry_ranking[lookup]
 
     # using symmetry_rank to check if most stable = most symmetric or not
     def exception_detection(df: pd.DataFrame):
@@ -110,7 +90,39 @@ def main(path):
         )
         plt.show()
 
+    def exception_summary(exception_df: pd.DataFrame):
+        formula_level = exception_df.groupby("formula_name")[
+            "formula_is_exception"
+        ].first()
+
+        total_formulas = formula_level.shape[0]
+        exception_formulas = formula_level.sum()  # true = 1 so w
+        exception_rate = exception_formulas / total_formulas
+
+        print(f"Total formulas checked: {total_formulas}")
+        print(f"Formulas flagged as exceptions: {exception_formulas}")
+        print(f"Exception rate: {exception_rate:.2%}")
+
+        poly_counts = exception_df.groupby("formula_name").size()
+        formula_summary = pd.DataFrame(
+            {
+                "is_exception": formula_level,
+                "num_polymorphs": poly_counts,
+            }
+        )
+
+        print("\nException rate by number of polymorphs in the formula group:")
+        print(
+            formula_summary.groupby("num_polymorphs")["is_exception"]
+            .agg(["mean", "count"])
+            .rename(columns={"mean": "exception_rate", "count": "num_formulas"})
+        )
+
+        return formula_summary
+
     exception_df = exception_detection(df)
+    formula_summary = exception_summary(exception_df)
+    print(formula_summary)
     plotting_function(exception_df)
 
 
