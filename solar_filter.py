@@ -77,7 +77,7 @@ def save_screening_report(merged: pd.DataFrame, min_gap: float, max_gap: float, 
     stat_labels = ["Materials in range", "Mean composite score", "Flagged as exceptions"]
     stat_values = [f"{num_screened}", f"{mean_score:.3f}", f"{num_exceptions} / {num_screened}"]
     for i, (label, value) in enumerate(zip(stat_labels, stat_values)):
-        x = 0.2 + i * 0. # spaces the 3 cards out evenly left to right (0.2, 0.5, 0.8)
+        x = 0.2 + i * 0.3 # spaces the 3 cards out evenly left to right (0.2, 0.5, 0.8)
         header_ax.text(x, 0.3, value, ha="center", fontsize=14, fontweight="bold", color="#2c5f8a", transform=header_ax.transAxes)
         header_ax.text(x, 0.05, label, ha="center", fontsize=9, color="dimgrey", transform=header_ax.transAxes)
 
@@ -111,20 +111,6 @@ def save_screening_report(merged: pd.DataFrame, min_gap: float, max_gap: float, 
                 cell.set_facecolor("#fde2e2")
             elif row % 2 == 0:
                 cell.set_facecolor("#f2f2f2")
-
-    # bottom stuff
-    note_ax = fig.add_subplot(gs[2])
-    note_ax.axis("off")
-    note_ax.text(
-        0.5, 0.6,
-        "Coarse screening proxy only — band gap here indicates \"electronically in the right range.\"\n"
-        "It says nothing about photostability, degradation under illumination, device efficiency,\n"
-        "or material lifetime, none of which this dataset measures.",
-        ha="center", va="center", fontsize=8.5, style="italic", color="#555555",
-        transform=note_ax.transAxes,
-        bbox=dict(boxstyle="round,pad=0.6", facecolor="#fff8e1", edgecolor="#e0c068"),
-        #this whole part feels more like css than python idontlikeit much
-    )
 
     plt.savefig(save_path, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig) #once again, thank god this exists.
