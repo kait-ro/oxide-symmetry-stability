@@ -77,7 +77,7 @@ def main(path):
     df["composite_score"] = compose_score(
         df["stability_norm"], df["symmetry_norm"], method="average"
     )
-    compare_rankings(df, top_n=10)
+    compare_rankings(df, top_n=200)
     return df
 
 

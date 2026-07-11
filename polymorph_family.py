@@ -9,7 +9,7 @@ def select_family(df: pd.DataFrame, formula: str) -> pd.DataFrame:
 
     if family.empty:
         raise ValueError(
-            f"No records found for formula '{formula}' — check spelling/capitalization."
+            f"No records found for formula '{formula}', check spelling/capitalization."
         )
 
     family["symmetry_rank"] = family["crystal_system"].apply(symmetry_rank)
@@ -25,7 +25,7 @@ def family_stability_summary(family: pd.DataFrame) -> pd.DataFrame:
     return summary
 
 
-def robustness_description(family: pd.DataFrame) -> dict:
+def stability_spread(family: pd.DataFrame) -> dict:
     most_stable_row = family.loc[family["energy_above_hull"].idxmin()]
 
     stats = {
@@ -50,7 +50,8 @@ def plot_family(
     fig, (ax, text_ax) = plt.subplots(
         2, 1, figsize=(8, 8), gridspec_kw={"height_ratios": [3, 2]}
     )
-
+    #Note for later, gridspeck_kw is letting me override the grid ratio for the plot-axis (ax, text_ax) here. so instead of being 1:1 It's 3:2
+    #Other controls are "width_ratios", "hspace", "wspace"
     ax.plot(
         family["symmetry_rank"],
         family["energy_above_hull"],
@@ -117,7 +118,7 @@ def main(path, formula="TiO2"):
             try:
                 family = select_family(df, f)
                 summary = family_stability_summary(family)
-                stats = robustness_description(family)
+                stats = stability_spread(family)
                 plot_family(
                     family, summary, stats, f, save_path=f"{output_dir}/family_{f}.png"
                 )
@@ -136,7 +137,7 @@ def main(path, formula="TiO2"):
     else:
         family = select_family(df, formula)
         summary = family_stability_summary(family)
-        stats = robustness_description(family)
+        stats = stability_spread(family)
 
         print(f"--- Polymorph family summary: {formula} ---")
         print(summary.to_string(index=False))

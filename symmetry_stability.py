@@ -28,8 +28,8 @@ def exception_detection(df: pd.DataFrame):
                 }
             )
     """most stable = low energy_above_hull
-           most symmetric = rank fom symmetry_ranking
-           exception if the above two are not same row"""
+        most symmetric = rank fom symmetry_ranking
+        exception if the above two are not same row"""
     exception_df = pd.DataFrame(records)
     return exception_df
 
