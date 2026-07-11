@@ -75,7 +75,7 @@ def plotting_function(exception_df: pd.DataFrame):
         zorder=3,
     )
 
-    ax.set_xlabel("Symmetry rank (1=Triclinic ... 7=Cubic)")
+    ax.set_xlabel("Symmetry rank (1=Triclinic, 2=Monoclinic, 3=Orthorhombic, 4=Tetragonal, 5=Trigonal, 6=Hexagonal, 7=Cubic)")
     ax.set_ylabel("Energy above hull (eV/atom), lower = more stable")
     ax.set_title("Symmetry vs. Stability — distribution per symmetry rank")
     ax.legend()
